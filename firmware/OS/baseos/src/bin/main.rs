@@ -13,6 +13,15 @@ fn panic(_: &core::panic::PanicInfo) -> ! {
 
 extern crate alloc;
 
+#[embassy_executor::task]
+async fn task_example(){
+    // This is an example task that can be spawned
+    loop {
+        Timer::after(Duration::from_secs(1)).await;
+        // Here you can add code to run periodically
+    }
+}
+
 #[esp_hal_embassy::main]
 async fn main(spawner: Spawner) {
     // generator version: 0.3.1
@@ -34,11 +43,7 @@ async fn main(spawner: Spawner) {
     .unwrap();
 
     // TODO: Spawn some tasks
-    let _ = spawner;
+    let spawner = spawner;
+    spawner.spawn(task_example()).unwrap();
 
-    loop {
-        Timer::after(Duration::from_secs(1)).await;
-    }
-
-    // for inspiration have a look at the examples at https://github.com/esp-rs/esp-hal/tree/esp-hal-v1.0.0-beta.0/examples/src/bin
 }
